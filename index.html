@@ -4,20 +4,59 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tower Test</title>
-  <style>
-    body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-      background: #111;
-      color: #eee;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Tower Test</h1>
+  <div id="app">
+    <div id="top-bar">
+      <span id="hud-lives">❤️ <span id="lives">10</span></span>
+      <span id="hud-gold">💰 <span id="gold">100</span></span>
+      <span id="hud-level">Level <span id="level">1</span></span>
+      <span id="hud-status" id="status">Get Ready</span>
+    </div>
+    <div id="main">
+      <canvas id="game-canvas" width="1120" height="720"></canvas>
+      <div id="sidebar">
+        <div id="tower-select">
+          <p class="sidebar-label">Place Tower</p>
+          <button class="tower-btn" data-type="arrow">
+            <span class="tower-icon arrow-icon"></span>
+            <span class="tower-name">Arrow</span>
+            <span class="tower-cost">50g</span>
+          </button>
+          <button class="tower-btn" data-type="bomb">
+            <span class="tower-icon bomb-icon"></span>
+            <span class="tower-name">Bomb</span>
+            <span class="tower-cost">75g</span>
+          </button>
+          <button class="tower-btn" data-type="laser">
+            <span class="tower-icon laser-icon"></span>
+            <span class="tower-name">Laser</span>
+            <span class="tower-cost">125g</span>
+          </button>
+        </div>
+        <div id="upgrade-panel" class="hidden">
+          <p class="sidebar-label">Upgrade Tower</p>
+          <div id="upgrade-info"></div>
+          <div id="upgrade-buttons"></div>
+          <button id="sell-btn">Sell</button>
+        </div>
+        <div id="wave-controls">
+          <button id="start-wave-btn">Start Wave</button>
+        </div>
+        <div id="message-box" class="hidden">
+          <p id="message-text"></p>
+          <button id="message-btn">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/levels.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/enemy.js"></script>
+  <script src="js/projectile.js"></script>
+  <script src="js/tower.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>
