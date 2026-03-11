@@ -15,7 +15,12 @@
       <span id="hud-status" id="status">Get Ready</span>
     </div>
     <div id="main">
-      <canvas id="game-canvas" width="1120" height="720"></canvas>
+      <div id="canvas-wrap">
+        <canvas id="game-canvas" width="1120" height="720"></canvas>
+        <div id="wave-controls">
+          <button id="start-wave-btn">Start Wave</button>
+        </div>
+      </div>
       <div id="sidebar">
         <div id="tower-select">
           <p class="sidebar-label">Place Tower</p>
@@ -40,9 +45,6 @@
           <div id="upgrade-info"></div>
           <div id="upgrade-buttons"></div>
           <button id="sell-btn">Sell</button>
-        </div>
-        <div id="wave-controls">
-          <button id="start-wave-btn">Start Wave</button>
         </div>
         <div id="message-box" class="hidden">
           <p id="message-text"></p>

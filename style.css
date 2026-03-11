@@ -36,10 +36,22 @@ body {
   display: flex;
 }
 
+#canvas-wrap {
+  position: relative;
+}
+
 #game-canvas {
   display: block;
   image-rendering: pixelated;
   cursor: crosshair;
+}
+
+#wave-controls {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 52px);
+  transform: translateX(-50%);
+  z-index: 5;
 }
 
 #sidebar {
@@ -131,8 +143,6 @@ body {
   width: 100%;
 }
 #sell-btn:hover { background: #3a2020; }
-
-#wave-controls { margin-top: auto; }
 
 #start-wave-btn {
   width: 100%;
