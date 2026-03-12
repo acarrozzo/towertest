@@ -71,6 +71,57 @@ function setStartWaveBtn(enabled, text) {
   btn.textContent = text;
 }
 
+function setPauseBtn(enabled, paused) {
+  const btn = document.getElementById('pause-btn');
+  btn.disabled = !enabled;
+  btn.textContent = paused ? '▶ Resume' : '⏸ Pause';
+  btn.classList.toggle('active', paused);
+}
+
+function setSpeedBtn(speed) {
+  const btn = document.getElementById('speed-btn');
+  btn.textContent = speed === 2 ? '1x' : '⏩ 2x';
+  btn.classList.toggle('active', speed === 2);
+}
+
+function updateWavePreview(state) {
+  const info = document.getElementById('wave-preview-info');
+  const label = document.querySelector('#wave-preview .sidebar-label');
+
+  if (state.phase === STATE.GAMEOVER || state.phase === STATE.VICTORY) {
+    label.textContent = 'Next Wave';
+    info.innerHTML = '<span style="color:#555">—</span>';
+    return;
+  }
+
+  let idx;
+  if (state.phase === STATE.PLAYING) {
+    idx = state.level; // 0-indexed next level
+    label.textContent = 'After This';
+    if (idx >= LEVELS.length) {
+      info.innerHTML = '<span style="color:#fd3">Final wave!</span>';
+      return;
+    }
+  } else {
+    idx = state.level - 1; // 0-indexed current/upcoming
+    label.textContent = 'Next Wave';
+  }
+
+  const lvl = LEVELS[idx];
+  const stats = ENEMY_STATS[lvl.enemyType];
+  const traits = [];
+  if (stats.armorResist > 0) traits.push('<span style="color:#9a9">Armored</span>');
+  if (stats.speed >= 2.5)    traits.push('<span style="color:#ff8">Fast</span>');
+  if (lvl.boss)              traits.push('<span style="color:#f4f">+ Boss</span>');
+
+  info.innerHTML =
+    `Wave ${idx + 1}/5<br>` +
+    `${lvl.count}× ${lvl.enemyType}<br>` +
+    `HP: ${stats.hp} · Spd: ${stats.speed}` +
+    (traits.length ? '<br>' + traits.join(' ') : '') +
+    (lvl.boss ? `<br><span style="color:#f4f">Boss HP: ${ENEMY_STATS.boss.hp}</span>` : '');
+}
+
 // Draw wave progress bar on canvas
 function drawWaveProgress(ctx, spawned, total, level) {
   const barW = 200;

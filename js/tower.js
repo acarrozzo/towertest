@@ -28,16 +28,28 @@ const TOWER_DEFS = {
       '3B': { name: 'Cluster Bomb',   cost: 100, desc: '3 bombs, wider', damage: 40, range: 120, fireRate: 1800, splash: 55, chain: 3 }
     }
   },
+  ice: {
+    name: 'Ice',
+    cost: 100,
+    color: '#9ef',
+    base: { damage: 12, range: 130, fireRate: 1500, splash: 0, slowFactor: 0.5, slowDuration: 1200 },
+    upgradeTree: {
+      '2A': { name: 'Deep Freeze',  cost: 75,  desc: 'Stronger slow',    damage: 20, range: 140, fireRate: 1100, splash: 0,   slowFactor: 0.3, slowDuration: 2000 },
+      '2B': { name: 'Ice Shards',   cost: 75,  desc: 'AoE slow',         damage: 10, range: 125, fireRate: 1800, splash: 65,  slowFactor: 0.5, slowDuration: 1200 },
+      '3A': { name: 'Permafrost',   cost: 110, desc: 'Near-freeze',       damage: 30, range: 155, fireRate: 900,  splash: 0,   slowFactor: 0.15, slowDuration: 3000 },
+      '3B': { name: 'Blizzard',     cost: 110, desc: 'Massive AoE slow',  damage: 15, range: 140, fireRate: 2000, splash: 110, slowFactor: 0.4, slowDuration: 1800 }
+    }
+  },
   laser: {
     name: 'Laser',
     cost: 125,
     color: '#f4f',
     base: { damage: 80, range: 160, fireRate: 2000, splash: 0 },
     upgradeTree: {
-      '2A': { name: 'Overcharge', cost: 60, desc: '+dmg, armor pierce', damage: 140, range: 160, fireRate: 2500, splash: 0, ignoreArmor: true },
-      '2B': { name: 'Sweep',      cost: 60, desc: 'Hits 2 enemies',     damage: 70,  range: 170, fireRate: 1800, splash: 0, sweep: 2 },
-      '3A': { name: 'Death Ray',  cost: 100, desc: 'Extreme single dmg', damage: 260, range: 180, fireRate: 2800, splash: 0, ignoreArmor: true },
-      '3B': { name: 'Grid Lock',  cost: 100, desc: 'Slows + hits 3',    damage: 80,  range: 190, fireRate: 1600, splash: 0, sweep: 3, slow: true }
+      '2A': { name: 'Overcharge', cost: 60, desc: '+dmg, armor pierce',    damage: 140, range: 160, fireRate: 2500, splash: 0, ignoreArmor: true },
+      '2B': { name: 'Sweep',      cost: 60, desc: 'Hits 2 enemies',        damage: 70,  range: 170, fireRate: 1800, splash: 0, sweep: 2 },
+      '3A': { name: 'Death Ray',  cost: 100, desc: 'Extreme single dmg',   damage: 260, range: 180, fireRate: 2800, splash: 0, ignoreArmor: true },
+      '3B': { name: 'Grid Lock',  cost: 100, desc: 'High-speed multi-target', damage: 100, range: 195, fireRate: 1400, splash: 0, sweep: 3 }
     }
   }
 };
@@ -68,15 +80,17 @@ class Tower {
   }
 
   applyStats(stats) {
-    this.damage    = stats.damage;
-    this.range     = stats.range;
-    this.fireRate  = stats.fireRate;
-    this.splash    = stats.splash || 0;
+    this.damage      = stats.damage;
+    this.range       = stats.range;
+    this.fireRate    = stats.fireRate;
+    this.splash      = stats.splash || 0;
     this.ignoreArmor = stats.ignoreArmor || false;
-    this.multi     = stats.multi || false;
-    this.chain     = stats.chain || false;
-    this.sweep     = stats.sweep || false;
-    this.slow      = stats.slow || false;
+    this.multi       = stats.multi || false;
+    this.chain       = stats.chain || false;
+    this.sweep       = stats.sweep || false;
+    this.slow        = stats.slow || false;
+    this.slowFactor  = stats.slowFactor || 0;
+    this.slowDuration = stats.slowDuration || 0;
   }
 
   // Returns available upgrade options from current state
@@ -137,6 +151,7 @@ class Tower {
 
     if (this.multi) return inRange.slice(0, this.multi);
     if (this.sweep) return inRange.slice(0, this.sweep);
+    if (this.chain) return inRange.slice(0, this.chain);
     return [inRange[0]];
   }
 
@@ -145,6 +160,8 @@ class Tower {
       splashRadius: this.splash || 0,
       ignoreArmor: this.ignoreArmor,
       slow: this.slow,
+      slowFactor: this.slowFactor,
+      slowDuration: this.slowDuration,
       color: this.color
     };
 
@@ -191,7 +208,8 @@ class Tower {
     }
 
     if (this.type === 'arrow') drawArrowTower(ctx, x, y, this.tier, this.color, pulse);
-    else if (this.type === 'bomb') drawBombTower(ctx, x, y, this.tier, this.color, pulse);
+    else if (this.type === 'bomb')  drawBombTower(ctx, x, y, this.tier, this.color, pulse);
+    else if (this.type === 'ice')   drawIceTower(ctx, x, y, this.tier, this.color, pulse);
     else if (this.type === 'laser') drawLaserTower(ctx, x, y, this.tier, this.color, pulse);
 
     // Tier badge
@@ -250,6 +268,36 @@ function drawBombTower(ctx, x, y, tier, color, pulse) {
   ctx.arc(x, y - 12, 2 + pulse * 0.5, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x - s, y - s, s * 2, s * 2);
+}
+
+function drawIceTower(ctx, x, y, tier, color, pulse) {
+  const s = 14 + (tier - 1) * 2;
+  ctx.fillStyle = '#0d2a2a';
+  ctx.fillRect(x - s, y - s, s * 2, s * 2);
+  // Snowflake: 3 crossing lines
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 5 + pulse;
+  ctx.lineWidth = 2;
+  const r = 9 + pulse * 0.3;
+  for (let i = 0; i < 3; i++) {
+    const angle = (Math.PI / 3) * i;
+    ctx.beginPath();
+    ctx.moveTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r);
+    ctx.lineTo(x - Math.cos(angle) * r, y - Math.sin(angle) * r);
+    ctx.stroke();
+  }
+  ctx.shadowBlur = 0;
+  // Center crystal
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(x, y, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = '#1a4040';
   ctx.lineWidth = 1;
   ctx.strokeRect(x - s, y - s, s * 2, s * 2);
 }

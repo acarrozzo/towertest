@@ -8,9 +8,9 @@ class Projectile {
     this.done = false;
     this.opts = opts; // splashRadius, ignoreArmor, slow, etc.
 
-    // Arrow / bomb: move toward target
-    this.speed = type === 'bomb' ? 3.5 : 7;
-    this.color = type === 'arrow' ? '#7df' : type === 'bomb' ? '#f84' : '#f4f';
+    // Arrow / bomb / ice: move toward target
+    this.speed = type === 'bomb' ? 3.5 : type === 'ice' ? 5 : 7;
+    this.color = type === 'arrow' ? '#7df' : type === 'bomb' ? '#f84' : type === 'ice' ? '#9ef' : '#f4f';
 
     // Laser: instant line that persists briefly
     if (type === 'laser') {
@@ -72,6 +72,7 @@ class Projectile {
         const d = Math.hypot(e.x - this.x, e.y - this.y);
         if (d <= radius) {
           e.takeDamage(this.damage, this.opts.ignoreArmor || false);
+          if (this.opts.slowFactor) e.applySlow(this.opts.slowFactor, this.opts.slowDuration || 1200);
         }
       }
       this.exploding = true;
@@ -79,9 +80,8 @@ class Projectile {
       // Single target
       if (!this.target.dead && !this.target.reached) {
         this.target.takeDamage(this.damage, this.opts.ignoreArmor || false);
-        if (this.opts.slow) {
-          this.target.applySlow(0.4, 1500);
-        }
+        if (this.opts.slow) this.target.applySlow(0.4, 1500);
+        if (this.opts.slowFactor) this.target.applySlow(this.opts.slowFactor, this.opts.slowDuration || 1200);
       }
       this.done = true;
     }
@@ -114,12 +114,12 @@ class Projectile {
       const alpha = 1 - (this.explodeTimer / 200);
       ctx.save();
       ctx.globalAlpha = alpha * 0.6;
-      ctx.fillStyle = '#f84';
+      ctx.fillStyle = this.type === 'ice' ? '#9ef' : '#f84';
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.explodeRadius, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = alpha;
-      ctx.strokeStyle = '#ff4';
+      ctx.strokeStyle = this.type === 'ice' ? '#aff' : '#ff4';
       ctx.lineWidth = 2;
       ctx.stroke();
       ctx.restore();
@@ -154,6 +154,17 @@ class Projectile {
       ctx.fillStyle = '#ff0';
       ctx.beginPath();
       ctx.arc(this.x - 2, this.y - 2, 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (this.type === 'ice') {
+      ctx.fillStyle = '#9ef';
+      ctx.shadowColor = '#aff';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(this.x - 1, this.y - 1, 1.5, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();

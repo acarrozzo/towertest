@@ -12,6 +12,10 @@
       <span id="hud-lives">❤️ <span id="lives">10</span></span>
       <span id="hud-gold">💰 <span id="gold">100</span></span>
       <span id="hud-level">Level <span id="level">1</span></span>
+      <div id="game-controls">
+        <button id="pause-btn" disabled>⏸ Pause</button>
+        <button id="speed-btn">⏩ 2x</button>
+      </div>
       <span id="hud-status" id="status">Get Ready</span>
     </div>
     <div id="main">
@@ -34,11 +38,20 @@
             <span class="tower-name">Bomb</span>
             <span class="tower-cost">75g</span>
           </button>
+          <button class="tower-btn" data-type="ice">
+            <span class="tower-icon ice-icon"></span>
+            <span class="tower-name">Ice</span>
+            <span class="tower-cost">100g</span>
+          </button>
           <button class="tower-btn" data-type="laser">
             <span class="tower-icon laser-icon"></span>
             <span class="tower-name">Laser</span>
             <span class="tower-cost">125g</span>
           </button>
+        </div>
+        <div id="wave-preview">
+          <p class="sidebar-label">Next Wave</p>
+          <div id="wave-preview-info"></div>
         </div>
         <div id="upgrade-panel" class="hidden">
           <p class="sidebar-label">Upgrade Tower</p>

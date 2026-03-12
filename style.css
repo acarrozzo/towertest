@@ -32,6 +32,24 @@ body {
 #hud-level { color: #8cf; }
 #hud-status { margin-left: auto; color: #aaa; font-size: 12px; }
 
+#game-controls { display: flex; gap: 6px; }
+
+#pause-btn, #speed-btn {
+  background: #1a1a2e;
+  border: 1px solid #445;
+  color: #aaa;
+  padding: 4px 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+#pause-btn:hover, #speed-btn:hover { background: #252545; border-color: #667; color: #eee; }
+#pause-btn.active { background: #2a1a1a; border-color: #633; color: #f88; }
+#speed-btn.active { background: #1a2a1a; border-color: #363; color: #8f8; }
+#pause-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
 #main {
   display: flex;
 }
@@ -102,7 +120,11 @@ body {
 
 .arrow-icon { background: #7df; clip-path: polygon(0 40%, 70% 40%, 70% 0%, 100% 50%, 70% 100%, 70% 60%, 0 60%); }
 .bomb-icon  { background: #f84; border-radius: 50%; }
+.ice-icon   { background: #9ef; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
 .laser-icon { background: #f4f; clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%); }
+
+#wave-preview { border-top: 1px solid #333; padding-top: 10px; }
+#wave-preview-info { font-size: 11px; color: #aaa; line-height: 1.7; }
 
 #upgrade-panel { border-top: 1px solid #333; padding-top: 10px; }
 
